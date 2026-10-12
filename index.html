@@ -1,670 +1,164 @@
+<?php
+$hasil = "";
+$angka1 = "";
+$angka2 = "";
+$operator = "+";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $angka1 = $_POST["angka1"] ?? "";
+    $angka2 = $_POST["angka2"] ?? "";
+    $operator = $_POST["operator"] ?? "+";
+
+    if (is_numeric($angka1) && is_numeric($angka2)) {
+        $a = (float)$angka1;
+        $b = (float)$angka2;
+
+        switch ($operator) {
+            case "+":
+                $hasil = $a + $b;
+                break;
+            case "-":
+                $hasil = $a - $b;
+                break;
+            case "*":
+                $hasil = $a * $b;
+                break;
+            case "/":
+                $hasil = ($b == 0)
+                    ? "Tidak bisa dibagi nol"
+                    : $a / $b;
+                break;
+            default:
+                $hasil = "Operator tidak valid";
+        }
+    } else {
+        $hasil = "Masukkan angka yang valid";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panduan Kesehatan Jasmani Modern - VitaFit</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- VARIABLE SYSTEM & RESET --- */
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --primary-light: #d1fae5;
-            --accent: #0ea5e9;
-            --dark: #0f172a;
-            --gray-dark: #334155;
-            --gray-light: #f8fafc;
-            --border: #e2e8f0;
-            --white: #ffffff;
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-            --shadow-hover: 0 20px 25px -5px rgba(16, 185, 129, 0.15), 0 8px 10px -6px rgba(16, 185, 129, 0.1);
-        }
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator PHP</title>
 
+    <style>
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
         body {
-            background-color: #f1f5f9;
-            color: var(--gray-dark);
-            line-height: 1.8;
-        }
-
-        /* --- NAVIGATION --- */
-        header {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--dark);
-        }
-
-        .brand span {
-            color: var(--primary);
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--gray-dark);
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .btn-cta {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--white);
-            padding: 0.6rem 1.4rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
-        }
-
-        /* --- HERO BANNER --- */
-        .hero {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-
-        .hero-card {
-            background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
-            border-radius: 24px;
-            padding: 4rem 3rem;
-            color: var(--white);
-            position: relative;
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .hero-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid var(--primary);
-            color: var(--primary-light);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero-title {
-            font-size: 2.8rem;
-            line-height: 1.2;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-
-        .hero-desc {
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 1.5rem;
-        }
-
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
-
-        .hero-graphic {
-            position: relative;
-            z-index: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .graphic-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        /* --- MAIN LAYOUT --- */
-        .layout-container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: 2.5fr 1fr;
-            gap: 2.5rem;
-        }
-
-        /* --- ARTICLE CONTENT --- */
-        .article-card {
-            background: var(--white);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .content-block h2 {
-            font-size: 1.8rem;
-            color: var(--dark);
-            margin: 2.5rem 0 1rem 0;
-            font-weight: 800;
-            position: relative;
-        }
-
-        .content-block h2::before {
-            content: '';
-            position: absolute;
-            left: -3rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 6px;
-            height: 100%;
-            background: var(--primary);
-            border-radius: 0 4px 4px 0;
-        }
-
-        .content-block p {
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-            color: #475569;
-        }
-
-        /* --- BENEFIT GRID CARDS --- */
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .b-card {
-            background: var(--gray-light);
-            border: 1px solid var(--border);
-            padding: 1.8rem;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .b-card:hover {
-            transform: translateY(-5px);
-            background: var(--white);
-            border-color: var(--primary);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .b-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--primary-light);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .b-card h3 {
-            font-size: 1.2rem;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .b-card p {
-            font-size: 0.95rem;
-            color: #64748b;
+            align-items: center;
             margin: 0;
+            padding: 20px;
         }
 
-        /* --- CALLOUT BOX --- */
-        .quote-banner {
-            background: linear-gradient(135deg, var(--primary-light), #e0f2fe);
-            border-radius: 16px;
-            padding: 2rem;
-            margin: 2.5rem 0;
-            border-left: 6px solid var(--primary);
-        }
-
-        .quote-banner p {
-            font-weight: 700;
-            color: var(--dark);
-            font-size: 1.1rem;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .quote-banner span {
-            font-size: 0.9rem;
-            color: var(--primary-dark);
-            font-weight: 600;
-        }
-
-        /* --- SIDEBAR WIDGETS --- */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .widget {
-            background: var(--white);
-            padding: 2rem;
+        .kalkulator {
+            background: white;
+            padding: 30px;
             border-radius: 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 30px #0005;
         }
 
-        .widget-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--dark);
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        h2 {
+            text-align: center;
+            color: #243b55;
         }
 
-        /* Checklist Interactive (CSS Only) */
-        .checklist-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 1rem;
+        input, select, button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        input, select {
+            border: 1px solid #ccc;
+        }
+
+        button {
+            border: none;
+            background: #087f8c;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        .checklist-item input {
-            display: none;
+        button:hover {
+            background: #065e68;
         }
 
-        .custom-check {
-            width: 22px;
-            height: 22px;
-            border: 2px solid #cbd5e1;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+        .hasil {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #e8f8f5;
+            color: #11665c;
+            overflow-wrap: anywhere;
         }
 
-        .checklist-item input:checked + .custom-check {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .checklist-item input:checked + .custom-check::after {
-            content: '✓';
-            color: white;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .checklist-item input:checked ~ span {
-            text-decoration: line-through;
-            color: #94a3b8;
-        }
-
-        .checklist-text {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        /* Author Profile Widget */
-        .author-box {
+        .reset {
+            display: block;
             text-align: center;
-        }
-
-        .author-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 50%;
-            margin: 0 auto 1rem auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.8rem;
-        }
-
-        .author-name {
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .author-role {
-            font-size: 0.85rem;
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            background: var(--dark);
-            color: #94a3b8;
-            padding: 4rem 2rem 2rem 2rem;
-            margin-top: 5rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 3rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 3rem;
-        }
-
-        .footer-brand {
-            color: var(--white);
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 2rem auto 0 auto;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        /* --- RESPONSIVE MEDIA QUERIES --- */
-        @media (max-width: 992px) {
-            .hero-card {
-                grid-template-columns: 1fr;
-                padding: 2.5rem;
-            }
-
-            .layout-container {
-                grid-template-columns: 1fr;
-            }
-
-            .content-block h2::before {
-                display: none;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-title {
-                font-size: 2rem;
-            }
-
-            .hero-stats {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .nav-links {
-                display: none; /* Disembunyikan untuk tampilan mobile sederhana */
-            }
+            margin-top: 15px;
+            color: #087f8c;
+            text-decoration: none;
         }
     </style>
 </head>
+
 <body>
+    <div class="kalkulator">
+        <h2>🧮 Kalkulator PHP</h2>
 
-    <!-- NAVIGASI UTAMA -->
-    <header>
-        <div class="nav-container">
-            <div class="brand">
-                ⚡ Vita<span>Fit</span>
+        <form method="POST">
+            <input
+                type="number"
+                step="any"
+                name="angka1"
+                placeholder="Masukkan angka pertama"
+                value="<?= htmlspecialchars((string)$angka1) ?>"
+                required
+            >
+
+            <select name="operator">
+                <option value="+" <?= $operator == "+" ? "selected" : "" ?>>Penjumlahan (+)</option>
+                <option value="-" <?= $operator == "-" ? "selected" : "" ?>>Pengurangan (-)</option>
+                <option value="*" <?= $operator == "*" ? "selected" : "" ?>>Perkalian (×)</option>
+                <option value="/" <?= $operator == "/" ? "selected" : "" ?>>Pembagian (÷)</option>
+            </select>
+
+            <input
+                type="number"
+                step="any"
+                name="angka2"
+                placeholder="Masukkan angka kedua"
+                value="<?= htmlspecialchars((string)$angka2) ?>"
+                required
+            >
+
+            <button type="submit">HITUNG</button>
+        </form>
+
+        <?php if ($hasil !== ""): ?>
+            <div class="hasil">
+                <strong>Hasil Perhitungan:</strong>
+                <h3><?= htmlspecialchars((string)$hasil) ?></h3>
             </div>
-            <ul class="nav-links">
-                <li><a href="#">Beranda</a></li>
-                <li><a href="#">Edukasi</a></li>
-                <li><a href="#">Olahraga</a></li>
-                <li><a href="#">Nutrisi</a></li>
-            </ul>
-            <a href="#" class="btn-cta">Mulai Hidup Sehat</a>
-        </div>
-    </header>
+        <?php endif; ?>
 
-    <!-- HERO BANNER SECTION -->
-    <section class="hero">
-        <div class="hero-card">
-            <div>
-                <span class="badge">Edisi Kesehatan Jasmani</span>
-                <h1 class="hero-title">Investasi Terbaik untuk Tubuh Bugar & Produktif</h1>
-                <p class="hero-desc">Pahami cara kerja tubuh Anda, tingkatkan performa fisik, dan bangun ketahanan imun secara optimal setiap hari.</p>
-                
-                <div class="hero-stats">
-                    <div>
-                        <div class="stat-number">150+</div>
-                        <div class="stat-label">Menit/Minggu Olahraga</div>
-                    </div>
-                    <div>
-                        <div class="stat-number">8 Gelas</div>
-                        <div class="stat-label">Air Putih Harian</div>
-                    </div>
-                    <div>
-                        <div class="stat-number">7-8 Jam</div>
-                        <div class="stat-label">Tidur Berkualitas</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="hero-graphic">
-                <div class="graphic-icon">🫀</div>
-                <h3>Daya Tahan Tubuh</h3>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;">Meningkat hingga 40% dengan gaya hidup aktif yang konsisten.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- KONTEN UTAMA & SIDEBAR -->
-    <div class="layout-container">
-        
-        <!-- KONTEN ARTIKEL -->
-        <main class="article-card">
-            
-            <div class="content-block">
-                <p style="font-size: 1.2rem; font-weight: 600; color: var(--dark);">
-                    Di era modern ini, menjaga kesehatan jasmani sering kali terabaikan akibat rutinitas yang padat. Padahal, kondisi fisik yang prima adalah kunci utama untuk mempertahankan fokus, kreativitas, dan stamina jangka panjang.
-                </p>
-
-                <h2>Mengapa Kesehatan Jasmani Sangat Penting?</h2>
-                <p>
-                    Kesehatan jasmani tidak hanya merujuk pada ketiadaan penyakit, tetapi juga mencakup kemampuan tubuh untuk beradaptasi dengan stres fisik tanpa mengalami kelelahan berlebih. Ketika fisik kita berada dalam kondisi puncak, sistem organ dapat bekerja secara efisien.
-                </p>
-
-                <!-- GRID KARTU MANFAAT -->
-                <div class="benefits-grid">
-                    <div class="b-card">
-                        <div class="b-icon">🏃‍♂️</div>
-                        <h3>Meningkatkan Stamina</h3>
-                        <p>Memperkuat jaringan otot dan efisiensi sistem kardiovaskular Anda.</p>
-                    </div>
-                    <div class="b-card">
-                        <div class="b-icon">🛡️</div>
-                        <h3>Imunitas Kuat</h3>
-                        <p>Mempercepat produksi sel darah putih untuk melawan berbagai virus.</p>
-                    </div>
-                    <div class="b-card">
-                        <div class="b-icon">🧠</div>
-                        <h3>Fokus & Mental</h3>
-                        <p>Pelepasan hormon endorfin secara alami mengurangi stres dan kecemasan.</p>
-                    </div>
-                    <div class="b-card">
-                        <div class="b-icon">⚖️</div>
-                        <h3>Metabolisme Stabil</h3>
-                        <p>Membantu mengontrol kadar gula darah dan membakar kalori berlebih.</p>
-                    </div>
-                </div>
-
-                <h2>4 Pilar Utama Menjaga Kebugaran Fizikal</h2>
-                <p>
-                    Untuk mendapatkan tubuh yang sehat secara menyeluruh, Anda tidak perlu melakukan perubahan drastis dalam semalam. Cukup fokus pada empat pilar dasar berikut:
-                </p>
-
-                <div class="quote-banner">
-                    <p>"Bentuk tubuh ideal adalah dampak sampingan. Tujuan utamanya adalah tubuh yang bugar, fungsional, dan bebas dari rasa sakit."</p>
-                    <span>— Dr. Alan Pratama, Pakar Kedokteran Olahraga</span>
-                </div>
-
-                <p>
-                    1. <strong>Latihan Kardiovaskular:</strong> Lakukan olahraga ringan seperti jalan cepat, bersepeda, atau berenang selama minimal 30 menit sehari.<br>
-                    2. <strong>Latihan Kekuatan:</strong> Latihan beban atau <em>calisthenics</em> (push-up, squat) 2-3 kali seminggu untuk menjaga massa otot.<br>
-                    3. <strong>Nutrisi Seimbang:</strong> Utamakan makanan utuh (*whole food*), tingkatkan asupan serat, serta kurangi makanan olahan (*processed food*).<br>
-                    4. <strong>Pemulihan (Recovery):</strong> Berikan waktu bagi jaringan otot untuk memperbaiki diri melalui tidur berkualitas 7-8 jam per malam.
-                </p>
-
-                <h2>Kesimpulan</h2>
-                <p>
-                    Menjaga kesehatan jasmani adalah investasi berharga bagi masa depan Anda. Mulailah dari langkah-langkah kecil hari ini, tetap konsisten, dan nikmati perubahan positif pada energi dan kualitas hidup Anda!
-                </p>
-            </div>
-
-        </main>
-
-        <!-- SIDEBAR WIDGET -->
-        <aside class="sidebar">
-            
-            <!-- WIDGET CHECKLIST HARI INI -->
-            <div class="widget">
-                <div class="widget-title">
-                    <span>✅</span> Target Sehat Hari Ini
-                </div>
-                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Centang target yang sudah Anda selesaikan hari ini:</p>
-                
-                <label class="checklist-item">
-                    <input type="checkbox">
-                    <div class="custom-check"></div>
-                    <span class="checklist-text">Minum 2 Liter Air Putih</span>
-                </label>
-                
-                <label class="checklist-item">
-                    <input type="checkbox">
-                    <div class="custom-check"></div>
-                    <span class="checklist-text">Jalan Kaki 5.000 Langkah</span>
-                </label>
-                
-                <label class="checklist-item">
-                    <input type="checkbox">
-                    <div class="custom-check"></div>
-                    <span class="checklist-text">Makan Buah & Sayuran</span>
-                </label>
-                
-                <label class="checklist-item">
-                    <input type="checkbox">
-                    <div class="custom-check"></div>
-                    <span class="checklist-text">Tidur Sebelum Jam 11 Malam</span>
-                </label>
-            </div>
-
-            <!-- WIDGET PENULIS -->
-            <div class="widget author-box">
-                <div class="author-avatar">AP</div>
-                <div class="author-name">Dr. Alan Pratama</div>
-                <div class="author-role">Konsultan Kesehatan & Olahraga</div>
-                <p style="font-size: 0.85rem; color: #64748b;">Aktif membagikan artikel dan panduan praktis gaya hidup sehat berbasis sains.</p>
-            </div>
-
-        </aside>
-
+        <a class="reset" href="index.php">Reset Kalkulator</a>
     </div>
-
-    <!-- FOOTER -->
-    <footer>
-        <div class="footer-content">
-            <div>
-                <div class="footer-brand">⚡ VitaFit</div>
-                <p>Platform edukasi kesehatan terpercaya untuk membantu Anda mencapai kualitas hidup fisik dan mental terbaik.</p>
-            </div>
-            <div>
-                <h4 style="color: white; margin-bottom: 1rem;">Kategori</h4>
-                <p><a href="#" style="color: inherit; text-decoration: none;">Kardio & Fitness</a></p>
-                <p><a href="#" style="color: inherit; text-decoration: none;">Pola Makan Sehat</a></p>
-                <p><a href="#" style="color: inherit; text-decoration: none;">Kesehatan Mental</a></p>
-            </div>
-            <div>
-                <h4 style="color: white; margin-bottom: 1rem;">Kontak</h4>
-                <p>redaksi@vitafit.id</p>
-                <p>Jakarta, Indonesia</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 VitaFit Media. Hak Cipta Dilindungi Undang-Undang.</p>
-        </div>
-    </footer>
-
 </body>
 </html>
